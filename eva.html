@@ -1,0 +1,733 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>body{margin:0}</style>
+</head>
+<body>
+<title>Econ Exam Flashcards</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: one column "desk" holding a single ruled index card at a time; tabs swap the card for the study plan or the full cheat sheet. */
+:root{
+  --desk:#E3E8F0; --desk-2:#D4DBE8; --line:#C6CFDF;
+  --card:#FFFFFF; --ink:#18203A; --muted:#58627F;
+  --rule:#CBD9F1; --margin:#DD5547;
+  --accent:#2C49C2; --accent-ink:#FFFFFF; --accent-soft:#E2E7FA;
+  --good:#167A53; --good-soft:#DCF1E6; --bad:#B9440F; --bad-soft:#FBE5D7;
+  --star:#9A6512; --star-soft:#FAF0DA;
+  --shadow:0 1px 2px rgb(24 32 58 / .08), 0 8px 24px rgb(24 32 58 / .10);
+  --shadow-sm:0 1px 2px rgb(24 32 58 / .10);
+  --f-display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+  --f-body:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --lh:28px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --desk:#0F1329; --desk-2:#1A2042; --line:#2E3762;
+    --card:#1A2040; --ink:#E7EAF6; --muted:#9DA6C8;
+    --rule:#29325E; --margin:#E6685C;
+    --accent:#93A6FF; --accent-ink:#0E1330; --accent-soft:#283163;
+    --good:#52C995; --good-soft:#173B2F; --bad:#F2955F; --bad-soft:#41271B;
+    --star:#F0C468; --star-soft:#3A3122;
+    --shadow:0 1px 2px rgb(0 0 0 / .4), 0 10px 30px rgb(0 0 0 / .35);
+    --shadow-sm:0 1px 2px rgb(0 0 0 / .4);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --desk:#0F1329; --desk-2:#1A2042; --line:#2E3762;
+  --card:#1A2040; --ink:#E7EAF6; --muted:#9DA6C8;
+  --rule:#29325E; --margin:#E6685C;
+  --accent:#93A6FF; --accent-ink:#0E1330; --accent-soft:#283163;
+  --good:#52C995; --good-soft:#173B2F; --bad:#F2955F; --bad-soft:#41271B;
+  --star:#F0C468; --star-soft:#3A3122;
+  --shadow:0 1px 2px rgb(0 0 0 / .4), 0 10px 30px rgb(0 0 0 / .35);
+  --shadow-sm:0 1px 2px rgb(0 0 0 / .4);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--desk);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.55}
+.wrap{max-width:760px;margin:0 auto;padding-inline:16px;padding-block:24px 64px;display:flex;flex-direction:column;gap:20px}
+.top{display:flex;flex-direction:column;gap:8px}
+.eyebrow{margin:0;font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:700}
+h1{font-family:var(--f-display);font-weight:800;font-size:clamp(30px,6.4vw,42px);line-height:1.02;letter-spacing:-.015em;margin:0;text-wrap:balance}
+.lede{margin:0;color:var(--muted);max-width:64ch}
+.nav-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-top:6px}
+.tabs{display:flex;gap:4px;background:var(--desk-2);padding:4px;border-radius:10px;max-width:100%}
+.tab{appearance:none;border:0;background:transparent;color:var(--muted);font:inherit;font-weight:700;padding:8px 14px;border-radius:7px;cursor:pointer}
+.tab[aria-selected="true"]{background:var(--card);color:var(--ink);box-shadow:var(--shadow-sm)}
+.lang{display:flex;gap:2px;background:var(--desk-2);padding:3px;border-radius:8px}
+.lang button{appearance:none;border:0;background:transparent;color:var(--muted);font-family:var(--f-mono);font-size:12px;padding:5px 10px;border-radius:6px;cursor:pointer}
+.lang button[aria-pressed="true"]{background:var(--card);color:var(--ink);box-shadow:var(--shadow-sm)}
+.panel{display:flex;flex-direction:column;gap:16px}
+button:focus-visible,.card:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* study */
+.how{display:flex;flex-wrap:wrap;gap:6px 18px;margin:0;padding:0;list-style:none;font-size:13.5px;color:var(--muted)}
+.how li{display:flex;gap:6px;align-items:baseline}
+.how b{font-family:var(--f-mono);font-size:12px;color:var(--accent)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{appearance:none;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:6px 12px;font:inherit;font-size:14px;cursor:pointer;display:inline-flex;gap:6px;align-items:baseline}
+.chip .n{color:var(--muted);font-variant-numeric:tabular-nums;font-size:12px}
+@media (max-width:560px){
+  #chips{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin-inline:-16px;padding-inline:16px;padding-block:2px}
+  #chips::-webkit-scrollbar{display:none}
+  #chips .chip{flex:none;white-space:nowrap}
+}
+.chip[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.chip[aria-pressed="true"] .n{color:inherit;opacity:.8}
+.progress{display:flex;flex-direction:column;gap:6px}
+.bar{display:flex;height:8px;border-radius:99px;overflow:hidden;background:var(--desk-2)}
+.bar .k{background:var(--good)} .bar .a{background:var(--bad)}
+.stats{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.stats .k{color:var(--good);font-weight:700} .stats .a{color:var(--bad);font-weight:700}
+
+.card{background:var(--card);border-radius:4px;box-shadow:var(--shadow);overflow:hidden;outline:none}
+.card-head{padding:16px 20px 14px;border-bottom:2px solid var(--margin);display:flex;flex-direction:column;gap:8px}
+.meta{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;font-size:12px}
+.topic{text-transform:uppercase;letter-spacing:.08em;font-weight:700;color:var(--muted)}
+.star{background:var(--star-soft);color:var(--star);font-weight:700;padding:2px 8px;border-radius:99px}
+.miss{background:var(--bad-soft);color:var(--bad);font-weight:700;padding:2px 8px;border-radius:99px}
+.left{margin-left:auto;color:var(--muted);font-variant-numeric:tabular-nums}
+.q{font-family:var(--f-display);font-weight:600;font-size:clamp(21px,4.6vw,27px);line-height:1.2;margin:0;text-wrap:balance}
+.q-es{margin:0;color:var(--muted);font-style:italic}
+.ruled{--pt:12px;padding:var(--pt) 20px 24px;font-size:16px;line-height:var(--lh);min-height:calc(var(--lh) * 6 + 36px);
+  background-image:linear-gradient(to bottom,transparent calc(var(--lh) - 1px),var(--rule) calc(var(--lh) - 1px));
+  background-size:100% var(--lh);background-position:0 calc(var(--pt) - 5px)}
+.ans{animation:rise .22s ease-out}
+.ans p,.ans ul,.ans ol{margin:0}
+.ans > * + *{margin-top:var(--lh)}
+.ans ul,.ans ol{padding-left:1.3em}
+.ans li::marker{color:var(--muted)}
+code{font-family:var(--f-mono);font-size:.86em;background:var(--accent-soft);color:var(--ink);padding:2px 6px;border-radius:4px;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.reveal{appearance:none;width:100%;min-height:calc(var(--lh) * 5);display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;border:1.5px dashed var(--line);border-radius:8px;background:var(--card);color:var(--accent);font:inherit;font-weight:700;font-size:16px;cursor:pointer}
+.reveal:hover{border-color:var(--accent)}
+.kbd{font-family:var(--f-mono);font-size:11.5px;font-weight:500;border:1px solid var(--line);border-bottom-width:2px;border-radius:4px;padding:1px 6px;color:var(--muted)}
+.tip{display:flex;gap:12px;align-items:baseline;padding:12px 20px 14px;background:var(--star-soft);border-top:1px solid var(--line);font-size:14.5px;animation:rise .22s ease-out}
+.tip b{color:var(--star);text-transform:uppercase;font-size:11.5px;letter-spacing:.08em;flex:none}
+.tip span{min-width:0}
+@keyframes rise{from{opacity:0;transform:translateY(4px)}}
+@media (prefers-reduced-motion: reduce){.ans,.tip{animation:none}}
+
+.grade{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.btn{appearance:none;font:inherit;font-weight:700;font-size:16px;padding:14px 16px;border-radius:10px;border:0;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn.bad{background:var(--bad-soft);color:var(--bad)}
+.btn.good{background:var(--good-soft);color:var(--good)}
+.btn.main{background:var(--accent);color:var(--accent-ink)}
+.btn.plain{background:var(--desk-2);color:var(--ink)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.tools{display:flex;flex-wrap:wrap;gap:6px 18px;align-items:center;font-size:13px;color:var(--muted)}
+.link{appearance:none;background:none;border:0;padding:4px 0;color:var(--accent);font:inherit;font-weight:700;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.link[aria-pressed="true"]::before{content:"✓ "}
+.hint{margin-left:auto}
+@media (hover:none){.hint{display:none}}
+.done{background:var(--card);border-radius:4px;box-shadow:var(--shadow);padding:28px 20px;display:flex;flex-direction:column;gap:12px;align-items:flex-start;border-top:2px solid var(--margin)}
+.done h2{font-family:var(--f-display);font-weight:800;margin:0;font-size:24px}
+.done p{margin:0;color:var(--muted);max-width:56ch}
+.done .row{display:flex;flex-wrap:wrap;gap:10px;margin-top:6px}
+
+/* method + cheat sheet */
+.sheet{background:var(--card);border-radius:4px;box-shadow:var(--shadow);padding:20px;display:flex;flex-direction:column;gap:12px}
+.sheet h2{font-family:var(--f-display);font-weight:800;font-size:23px;line-height:1.15;margin:0;text-wrap:balance}
+.sheet > p{margin:0;max-width:64ch}
+.plan{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.plan li{display:grid;grid-template-columns:78px minmax(0,1fr);gap:12px;padding:12px 0;border-top:1px solid var(--line)}
+.plan .time{font-family:var(--f-mono);font-size:12.5px;color:var(--accent);font-variant-numeric:tabular-nums;padding-top:3px}
+.plan h3{margin:0 0 2px;font-size:16px}
+.plan p{margin:0}
+.plan li.break .time,.plan li.break h3{color:var(--muted)}
+.rules{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:6px}
+.tricks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+@media (max-width:560px){.tricks{grid-template-columns:minmax(0,1fr)}}
+.trick{border:1px solid var(--line);border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:2px}
+.trick b{font-size:11.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.trick span{font-weight:700}
+.cheat-topic h2{display:flex;align-items:baseline;gap:10px}
+.cheat-topic h2 .n{font-family:var(--f-mono);font-size:12px;color:var(--muted);font-weight:500}
+.ci{padding:14px 0 4px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:6px}
+.ci-q{margin:0;font-weight:700;font-size:16px}
+.ci-q .star{font-size:11px;margin-left:6px;vertical-align:2px}
+.ci-a p,.ci-a ul,.ci-a ol{margin:0 0 6px}
+.ci-a ul,.ci-a ol{padding-left:1.3em}
+.ci-tip{margin:0 0 6px;font-size:13.5px;color:var(--star)}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <p class="eyebrow" data-i="eyebrow">International Economics · exam review</p>
+    <h1>Econ Exam Flashcards</h1>
+    <p class="lede" id="lede">Flashcards built from the class notes. Cards marked ‼️ are the priority topics.</p>
+    <div class="nav-row">
+      <div class="tabs" role="tablist" aria-label="Sections">
+        <button class="tab" role="tab" id="tab-study" data-tab="study" aria-controls="p-study" data-i="tabStudy">Study</button>
+        <button class="tab" role="tab" id="tab-method" data-tab="method" aria-controls="p-method" data-i="tabMethod">Method</button>
+        <button class="tab" role="tab" id="tab-cheat" data-tab="cheat" aria-controls="p-cheat" data-i="tabCheat">Cheat sheet</button>
+      </div>
+      <div class="lang" role="group" aria-label="Language / Idioma">
+        <button type="button" data-lang="en" aria-pressed="true">EN</button>
+        <button type="button" data-lang="es" aria-pressed="false">ES</button>
+      </div>
+    </div>
+  </header>
+
+  <section class="panel" id="p-study" role="tabpanel" aria-labelledby="tab-study">
+    <ol class="how">
+      <li><b>1</b><span data-i="how1">Read the question</span></li>
+      <li><b>2</b><span data-i="how2">Answer it out loud, without looking</span></li>
+      <li><b>3</b><span data-i="how3">Flip it and mark it honestly</span></li>
+    </ol>
+    <div class="chips" id="chips"></div>
+    <div class="progress" id="progress"></div>
+    <div id="stage"></div>
+    <div class="grade" id="grade">
+      <button class="btn bad" id="btn-again" type="button" data-i="again">✗ Again</button>
+      <button class="btn good" id="btn-know" type="button" data-i="know">✓ I know it</button>
+    </div>
+    <div class="tools">
+      <button class="link" id="btn-shuffle" type="button" aria-pressed="false" data-i="shuffle">Shuffle</button>
+      <button class="link" id="btn-reset" type="button" data-i="reset">Clear my progress</button>
+      <span class="hint" id="hint"></span>
+    </div>
+  </section>
+
+  <section class="panel" id="p-method" role="tabpanel" aria-labelledby="tab-method" hidden></section>
+
+  <section class="panel" id="p-cheat" role="tabpanel" aria-labelledby="tab-cheat" hidden>
+    <div class="chips"><button class="chip" id="cheat-star" type="button" aria-pressed="false" data-i="cheatOnly">Only ‼️ priority</button></div>
+    <div class="panel" id="cheat"></div>
+  </section>
+</div>
+
+<script>
+(function(){
+const TOPICS=[
+  {key:"basics",en:"Economics basics",es:"Fundamentos"},
+  {key:"intl",en:"International business",es:"Negocio internacional"},
+  {key:"market",en:"Demand & supply",es:"Oferta y demanda"},
+  {key:"elast",en:"Elasticity",es:"Elasticidad"},
+  {key:"cost",en:"Cost & profit",es:"Costes y beneficio"},
+  {key:"trade",en:"Mercantilism & protectionism",es:"Mercantilismo y proteccionismo"},
+  {key:"theories",en:"Trade theories",es:"Teorías del comercio"},
+  {key:"compadv",en:"Comparative advantage",es:"Ventaja comparativa"},
+  {key:"forex",en:"FOREX",es:"Divisas (FOREX)"},
+  {key:"markets",en:"Emerging & mature markets",es:"Mercados emergentes y maduros"},
+  {key:"eu",en:"History of the EU",es:"Historia de la UE"}
+];
+const CARDS=[
+/* ---------- basics ---------- */
+{id:"b1",t:"basics",star:1,q:"What is economics as a science?",es:"¿Qué es la economía como ciencia?",
+a:`<p><b>Economics</b> is a <b>social science</b> that studies how people, firms and societies <b>choose</b> how to use <b>scarce resources</b> to satisfy <b>unlimited wants</b>.</p><p>It answers three basic questions: <b>what</b> to produce, <b>how</b> to produce it, and <b>for whom</b>.</p><ul><li><b>Microeconomics</b>: individual consumers, firms and markets</li><li><b>Macroeconomics</b>: the whole economy (GDP, inflation, unemployment)</li><li><b>Positive</b> economics = what is; <b>normative</b> = what should be</li></ul>`,
+tip:{en:"Scarcity + unlimited wants = we must choose. Economics is the science of choice.",es:"Escasez + deseos ilimitados = hay que elegir. La economía es la ciencia de elegir."}},
+{id:"b2",t:"basics",star:1,q:"What are the factors of production?",es:"Factores de producción",
+a:`<p>The resources used to produce goods and services:</p><ul><li><b>Land</b>: natural resources (earns <i>rent</i>)</li><li><b>Labour</b>: human work (earns <i>wages</i>)</li><li><b>Capital</b>: machines, tools, buildings (earns <i>interest</i>)</li><li><b>Entrepreneurship</b>: combines the other three and takes the risk (earns <i>profit</i>)</li></ul>`,
+tip:{en:"LLCE: Land, Labour, Capital, Entrepreneurship. Rewards in the same order: rent, wages, interest, profit.",es:"LLCE: Land, Labour, Capital, Entrepreneurship. En español: Tierra, Trabajo, Capital, Empresario."}},
+{id:"b3",t:"basics",star:1,q:"What is the role of the state in the economy?",es:"El papel del Estado en la economía",
+a:`<p>The state steps in where the market alone does not work well:</p><ol><li><b>Rules</b>: legal framework, property rights, contracts, competition law</li><li><b>Public goods</b>: defence, justice, roads, education</li><li><b>Market failures</b>: controls monopolies and pollution (externalities)</li><li><b>Redistribution</b>: taxes, pensions, social benefits</li><li><b>Stabilisation</b>: fiscal and monetary policy against inflation and unemployment</li><li><b>Trade policy</b>: free trade or protection (tariffs, quotas, subsidies)</li></ol>`,
+tip:{en:"Five roles: referee (rules), builder (public goods), doctor (fixes failures), Robin Hood (redistributes), firefighter (stabilises).",es:"Cinco personajes: árbitro (reglas), constructor (bienes públicos), médico (arregla fallos), Robin Hood (redistribuye), bombero (estabiliza)."}},
+{id:"b4",t:"basics",star:1,q:"What is the economic principle?",es:"El principio económico",
+a:`<p>The rule of rational economic behaviour. Because resources are scarce, every decision should be <b>efficient</b>:</p><ul><li><b>Maximum principle</b>: with <i>given</i> resources, get the <b>biggest</b> result</li><li><b>Minimum principle</b>: reach a <i>given</i> result with the <b>fewest</b> resources (lowest cost)</li></ul><p>It applies to households, firms and the state (spending public money efficiently).</p>`,
+tip:{en:"Maximum: same money, more result. Minimum: same result, less money.",es:"Máximo: mismo dinero, más resultado. Mínimo: mismo resultado, menos dinero."}},
+{id:"b5",t:"basics",star:1,q:"What is opportunity cost?",es:"Coste de oportunidad",
+a:`<p>The value of the <b>next best alternative</b> you give up when you make a choice.</p><p>It exists because resources are scarce: choosing one thing means not having another.</p><p><b>Example</b>: you study tonight instead of working a shift. The opportunity cost is the money from that shift.</p><p>In a firm, <b>implicit costs</b> are opportunity costs, e.g. the salary the owner could earn elsewhere.</p>`,
+tip:{en:"Only ONE alternative counts: the best one you give up.",es:"Solo cuenta UNA alternativa: la mejor a la que renuncias."}},
+{id:"b6",t:"basics",star:1,q:"What does scarcity (scarce resources) mean?",es:"Recursos escasos (escasez)",
+a:`<p>Resources (land, labour, capital, entrepreneurship) are <b>limited</b>, but human wants are <b>unlimited</b>.</p><p>So we cannot have everything: we must <b>choose</b>, and every choice has an <b>opportunity cost</b>.</p><p>Scarcity is the <b>basic economic problem</b>. It is the reason economics exists.</p>`,
+tip:{en:"Chain: scarcity → choice → opportunity cost.",es:"Cadena: escasez → elección → coste de oportunidad."}},
+/* ---------- international business ---------- */
+{id:"i1",t:"intl",star:1,q:"What is the engine of globalization? What drives it?",es:"El motor de la globalización",
+a:`<p>The main engine is the search for <b>profit</b>: firms go abroad to <b>create and sustain profit through diversification</b> (new markets, new consumers, cheaper resources).</p><p>What speeds it up:</p><ul><li><b>Multinational companies</b> (MNCs) and <b>foreign direct investment</b></li><li><b>Technology</b>: cheaper transport and communication</li><li><b>Trade liberalisation</b>: free trade, GATT → WTO, IMF</li></ul><p>In history, trade in <b>luxury products</b> (spices, silk, gold) was the engine of growth and expansion.</p>`,
+tip:{en:"Engine = PROFIT. Fuel = multinationals + technology + free trade.",es:"Motor = BENEFICIO. Gasolina = multinacionales + tecnología + libre comercio."}},
+{id:"i2",t:"intl",star:1,q:"What is a product? What are its two forms?",es:"¿Qué es un producto? Sus dos formas",
+a:`<p>A <b>product</b> is anything offered on a market to satisfy a need or want. Two forms:</p><ol><li><b>Goods</b> (merchandise): <b>tangible</b>, physical, can be stored and transported. E.g. a car, coffee.</li><li><b>Services</b>: <b>intangible</b>, produced and consumed at the same time. E.g. tourism, transport, banking.</li></ol><p>Both can be exported and imported.</p>`,
+tip:{en:"Goods you can touch; services you experience.",es:"Los bienes se tocan; los servicios se viven."}},
+{id:"i3",t:"intl",q:"What is international business?",es:"¿Qué es el negocio internacional?",
+a:`<p><b>Business transactions that involve two or more countries.</b></p><ul><li>Object: <b>products</b>, <b>services</b> or <b>resources</b></li><li>Actor: <b>private</b> or <b>governmental</b></li><li>Aim: <b>for profit</b> or <b>non-profit</b></li></ul><p>For-profit international business aims to create and sustain profit through diversification. The exchange can be <b>forced</b> (conquering) or <b>voluntary</b> (trade).</p>`,
+tip:{en:"Two or more countries. Products, services or resources.",es:"Dos o más países. Productos, servicios o recursos."}},
+{id:"i4",t:"intl",q:"What are the types of international business?",es:"Tipos de negocio internacional",
+a:`<ul><li>Merchandise export or import</li><li>Services export or import</li><li>Travel, tourism, transportation</li><li>Performance of activities abroad</li><li>Use of assets from abroad</li><li>Investments abroad: <b>direct</b> (FDI) or <b>portfolio</b> (debt or equity)</li><li>Special category: <b>multinational</b> and <b>transnational companies</b></li></ul>`,
+tip:{en:"Goods, services, travel, activities, assets, investments + multinationals.",es:"Bienes, servicios, viajes, actividades, activos, inversiones + multinacionales."}},
+{id:"i5",t:"intl",star:1,q:"What are the stages (forms) of internationalization?",es:"Etapas / formas de internacionalización",
+a:`<p>From least to most commitment, control and risk:</p><ol><li><b>Export / import</b></li><li><b>Licensing</b>: another firm uses your patent, brand or technology for a fee</li><li><b>Franchising</b>: another firm runs your whole business model (e.g. a fast-food chain)</li><li><b>FDI</b>, foreign direct investment: mergers and acquisitions, greenfield investment</li></ol>`,
+tip:{en:"ELFF: Export, Licensing, Franchising, FDI.",es:"ELFF: Export, Licensing, Franchising, FDI."}},
+{id:"i6",t:"intl",q:"What is FDI and what forms does it take?",es:"Inversión extranjera directa y sus formas",
+a:`<p><b>Foreign direct investment</b>: investing abroad to <b>own and control</b> a business.</p><ul><li><b>Greenfield</b>: building a new company or plant from zero</li><li><b>Mergers and acquisitions</b>: merging with or buying an existing foreign company</li></ul><p><b>Portfolio investment</b> is different: buying foreign shares (equity) or bonds (debt) <b>without control</b>.</p>`,
+tip:{en:"Greenfield = an empty green field: you build from zero.",es:"Greenfield = campo verde vacío: construyes desde cero."}},
+{id:"i7",t:"intl",q:"How did international business develop in history?",es:"Historia del negocio internacional",
+a:`<ol><li><b>Ancient times</b> (Egypt, Persia, Greece, Rome): power and conquering; slaves as workforce, land as the key resource. Peoples near seas and rivers specialise in trade (Levantine commerce, Jews, Armenians).</li><li><b>Middle Ages</b>: luxury products are a major engine of growth. Discoveries (spices, gold from the Americas for Spain and Portugal), trade routes like the <b>Silk Road</b>, exchange of technology and crafts.</li><li><b>Industrialisation and modern times</b>: international economic theories and new forms of business relations.</li></ol>`,
+tip:{en:"Ancient = conquest. Middle Ages = luxury goods and trade routes. Modern = theories and new business forms.",es:"Antigüedad = conquista. Edad Media = lujo y rutas. Hoy = teorías y nuevas formas de negocio."}},
+{id:"i8",t:"intl",q:"Which other disciplines matter in international business?",es:"Otras disciplinas relacionadas",
+a:`<ul><li><b>Geography</b>: where to go and what you find there</li><li><b>History</b>: short term, the background of relations; long term, culture</li><li><b>Politics</b>: political risk analysis</li><li><b>Law</b>: from product and production to labour and human rights</li></ul>`,
+tip:{en:"GHPL: Geography, History, Politics, Law.",es:"GHPL: Geografía, Historia, Política, Ley."}},
+/* ---------- demand & supply ---------- */
+{id:"m1",t:"market",q:"What is demand, and what is the law of demand?",es:"Demanda y ley de la demanda",
+a:`<p><b>Demand</b>: how much consumers are willing and able to buy <b>at each price</b>. <b>Quantity demanded</b> is the amount at <b>one</b> particular price.</p><p><b>Law of demand</b>: an <b>inverse</b> relation. Price ↑ → quantity demanded ↓. It is explained by the income and substitution effects.</p><p>A change in the good's own price = a movement <b>along</b> the curve.</p>`,
+tip:{en:"Price up, I buy less: an inverse relation.",es:"Precio sube, compro menos: relación inversa."}},
+{id:"m2",t:"market",q:"What shifts the demand curve?",es:"Determinantes de la demanda",
+a:`<ul><li><b>T</b>astes</li><li><b>I</b>ncome</li><li><b>P</b>rice of related goods</li><li><b>E</b>xpectation of a price change</li><li><b>N</b>umber of buyers (market demand)</li></ul><p><b>Substitutes</b> (coffee, tea): price of A ↑ → demand for B ↑. <b>Complements</b> (car, petrol): price of A ↑ → demand for B ↓.</p>`,
+tip:{en:"TIPEN: Tastes, Income, Price of related goods, Expectations, Number of buyers.",es:"TIPEN: Tastes, Income, Price of related goods, Expectations, Number of buyers."}},
+{id:"m3",t:"market",q:"What is supply? What shifts the supply curve?",es:"Oferta y sus determinantes",
+a:`<p><b>Supply</b>: how much sellers are willing and able to produce at each price. <b>Law of supply</b>: a <b>direct</b> relation. Price ↑ → quantity supplied ↑.</p><p>What shifts the curve:</p><ul><li><b>Nature</b> (weather, natural conditions)</li><li><b>Cost of production</b></li><li><b>Price of other goods</b></li><li><b>Expectation</b> of a price change</li><li><b>Number of sellers</b></li></ul>`,
+tip:{en:"Own price → you move ALONG the curve. Anything else → the curve SHIFTS.",es:"Precio propio → te mueves POR la curva. Todo lo demás → la curva SE DESPLAZA."}},
+{id:"m4",t:"market",q:"What is market equilibrium? Surplus vs shortage?",es:"Equilibrio, excedente y escasez",
+a:`<p><b>Equilibrium</b>: where supply and demand intersect, so quantity supplied = quantity demanded.</p><p><b>Surplus</b>: Qs &gt; Qd → the price falls until it disappears. <b>Shortage</b>: Qd &gt; Qs → the price rises until it disappears.</p><p>Market demand and market supply are the <b>horizontal sum</b> of the individual curves.</p>`,
+tip:{en:"Too much product → price falls. Too little → price rises.",es:"Sobra producto → baja el precio. Falta producto → sube el precio."}},
+{id:"m5",t:"market",q:"How do changes in demand or supply move price and quantity?",es:"Efectos de los cambios en oferta y demanda",
+a:`<ul><li>Demand ↑ → price ↑, quantity ↑</li><li>Demand ↓ → price ↓, quantity ↓</li><li>Supply ↑ → price ↓, quantity ↑</li><li>Supply ↓ → price ↑, quantity ↓</li></ul>`,
+tip:{en:"Demand shifts: price and quantity follow it. Supply shifts: quantity follows it, price goes the other way.",es:"Demanda: precio y cantidad van con ella. Oferta: la cantidad va con ella, el precio al revés."}},
+{id:"m6",t:"market",star:1,q:"What is a subsidy, and what does it do to a company and the market?",es:"Subvenciones a empresas",
+a:`<p>A <b>subsidy</b> is a payment or tax relief from the government to a company.</p><ul><li>It <b>lowers the firm's cost of production</b></li><li>→ supply shifts to the <b>right</b></li><li>→ <b>lower price</b>, <b>higher quantity</b></li></ul><p><b>Export subsidies</b> make domestic firms cheaper abroad. They are a <b>protectionist</b> tool, used together with tariffs and quotas (e.g. in mercantilism).</p>`,
+tip:{en:"Government pays part → costs ↓ → supply shifts right → P↓ Q↑.",es:"El Estado paga una parte → costes ↓ → oferta a la derecha → P↓ Q↑."}},
+/* ---------- elasticity ---------- */
+{id:"e1",t:"elast",star:1,q:"What is the formula of price elasticity of demand?",es:"Fórmula de la elasticidad",
+a:`<p><code>Ed = % change in Qd ÷ % change in P</code></p><p><code>% change = (new − old) ÷ old × 100</code></p><p>Use the absolute value (ignore the minus sign).</p><ul><li>Ed &gt; 1 → <b>elastic</b></li><li>Ed &lt; 1 → <b>inelastic</b></li><li>Ed = 1 → <b>unitary</b> elasticity</li></ul><p><b>Example</b>: price +10 %, quantity −20 % → Ed = 20 ÷ 10 = 2 → elastic.</p>`,
+tip:{en:"Quantity on TOP, price BELOW. Above 1 = buyers react strongly to price.",es:"Cantidad ARRIBA, precio ABAJO. Más de 1 = la gente reacciona mucho al precio."}},
+{id:"e2",t:"elast",q:"Perfectly elastic vs perfectly inelastic demand?",es:"Perfectamente elástica vs perfectamente inelástica",
+a:`<p><b>Vertical</b> demand = <b>perfectly inelastic</b> (Ed = 0): the price changes, quantity does not change at all.</p><p><b>Horizontal</b> demand = <b>perfectly elastic</b> (Ed = ∞): a tiny price change causes an infinite change in quantity.</p>`,
+tip:{en:"The I in Inelastic is a vertical line: I.",es:"La I de Inelástico es una línea vertical: I."}},
+{id:"e3",t:"elast",q:"What determines the elasticity of demand?",es:"Determinantes de la elasticidad",
+a:`<ul><li><b>Luxury or necessity</b>: luxuries are more elastic</li><li><b>Substitutes</b>: more acceptable substitutes → more elastic</li><li><b>Share of the budget</b>: a bigger part of the budget → more elastic</li></ul><p>Bread or medicine: inelastic. Holidays or one brand of soda: elastic.</p>`,
+tip:{en:"Luxury, substitutes, budget share: the more of each, the more elastic.",es:"Lujo, sustitutos, presupuesto: cuanto más de cada uno, más elástica."}},
+{id:"e4",t:"elast",q:"How can you find elasticity from total revenue?",es:"Elasticidad e ingreso total",
+a:`<ul><li>Price and total revenue move in <b>opposite</b> directions → <b>elastic</b></li><li>Price and total revenue move in the <b>same</b> direction → <b>inelastic</b></li><li>Price changes but total revenue does not → <b>unitary</b></li></ul><p>With inelastic demand, firms may work together to <b>raise the price</b>, because total revenue then rises.</p>`,
+tip:{en:"Inelastic: raise the price and earn more.",es:"Inelástica: subo el precio y gano más."}},
+/* ---------- cost, revenue, profit ---------- */
+{id:"c1",t:"cost",star:1,q:"What is the difference between fixed cost and variable cost?",es:"Coste fijo vs coste variable",
+a:`<p><b>Fixed cost</b> does <b>not</b> change with output. You pay it even if you produce nothing: rent, insurance, machine leasing, managers' salaries.</p><p><b>Variable cost</b> <b>changes</b> with output: raw materials, energy, packaging, hourly wages.</p><p><code>Total cost = total fixed cost + total variable cost</code></p>`,
+tip:{en:"If you produce 0 and still pay it, it's fixed.",es:"Si produces 0 y aún lo pagas, es fijo."}},
+{id:"c2",t:"cost",q:"Explicit vs implicit costs?",es:"Costes explícitos vs implícitos",
+a:`<p><b>Explicit costs</b>: money payments made during production (wages, rent, materials).</p><p><b>Implicit costs</b>: the <b>opportunity cost</b> of resources the owner already owns (own time, own building, own money).</p><p>In economics, <b>total cost = explicit + implicit</b>.</p>`,
+tip:{en:"Explicit = money leaves the till. Implicit = what you could have earned instead.",es:"Explícito = sale dinero de la caja. Implícito = lo que dejas de ganar."}},
+{id:"c3",t:"cost",q:"What are AFC, AVC and ATC?",es:"Costes medios",
+a:`<p><code>AFC = TFC ÷ Q</code> falls as output grows, but never reaches zero.</p><p><code>AVC = TVC ÷ Q</code></p><p><code>ATC = TC ÷ Q = AFC + AVC</code></p>`,
+tip:{en:"Average = total divided by quantity.",es:"Average = total dividido por la cantidad."}},
+{id:"c4",t:"cost",q:"What is marginal cost, and what shape does it have?",es:"Coste marginal",
+a:`<p><code>MC = ΔTC ÷ ΔQ = ΔTVC ÷ ΔQ</code></p><p>The extra cost of one more unit. Fixed cost does not change, so only variable cost counts.</p><p>MC is <b>hook-shaped</b> because of the <b>law of diminishing returns</b>.</p><p>If marginal &gt; average, the average rises; if marginal &lt; average, it falls. So <b>MC cuts ATC at its lowest point</b>.</p>`,
+tip:{en:"Marginal = one more unit.",es:"Marginal = la unidad de más."}},
+{id:"c5",t:"cost",star:1,q:"Normal profit, economic profit and economic loss: what is the difference?",es:"Beneficio normal, beneficio económico y pérdida",
+a:`<p><code>Profit = total revenue − total cost</code>. Total cost includes explicit <b>and</b> implicit costs.</p><ul><li>TR &gt; TC → <b>economic profit</b></li><li>TR = TC → <b>normal profit</b>: all costs are covered, including the owner's opportunity cost</li><li>TR &lt; TC → <b>economic loss</b></li></ul>`,
+tip:{en:"Greater (>) = economic profit. Equal (=) = normal. Less (<) = loss.",es:"Mayor que (>) = beneficio económico. Igual (=) = normal. Menor que (<) = pérdida."}},
+{id:"c6",t:"cost",q:"What are total revenue and marginal revenue?",es:"Ingreso total e ingreso marginal",
+a:`<p><code>TR = P × Q</code></p><p><code>MR = ΔTR ÷ ΔQ</code>, the extra revenue from one more unit sold.</p><p><b>Perfect competition</b>: horizontal demand at the market price, so <b>MR = P</b>.</p><p><b>Monopoly</b>: must lower the price on all units to sell one more, so <b>MR &lt; P</b>; the MR curve lies below demand.</p>`,
+tip:{en:"Competition: MR = P. Monopoly: MR < P.",es:"Competencia: MR = P. Monopolio: MR < P."}},
+{id:"c7",t:"cost",q:"What is market power? What are the 3 elements of market structure?",es:"Poder de mercado y estructura de mercado",
+a:`<p><b>Market power</b>: a firm's ability to control its own price.</p><p><b>Market structure</b> has three elements:</p><ol><li>Number of firms</li><li>Freedom of entry</li><li>How standardised the product is</li></ol>`,
+tip:{en:"NEP: Number of firms, Entry, Product.",es:"NEP: Número, Entrada, Producto."}},
+{id:"c8",t:"cost",star:1,q:"What is freedom of entry? What are barriers to entry?",es:"Libertad y barreras de entrada",
+a:`<p><b>Freedom of entry</b>: how easily new firms can enter a market. It is one of the 3 elements of market structure.</p><ul><li><b>Free entry</b> → many firms → no market power (perfect competition)</li><li><b>Blocked entry</b> → one firm → monopoly</li></ul><p>Typical <b>barriers to entry</b>: high start-up costs, patents and licences, government rules, control of key resources, brand loyalty, tariffs and quotas against foreign firms.</p>`,
+tip:{en:"More barriers → fewer firms → more market power.",es:"Más barreras → menos empresas → más poder de mercado."}},
+{id:"c9",t:"cost",q:"Perfect competition vs monopoly?",es:"Competencia perfecta vs monopolio",
+a:`<p><b>Perfect competition</b>: many firms, free entry, standardised product. No market power; the firm accepts the market price; MR = P.</p><p><b>Monopoly</b>: one firm, blocked entry, no acceptable substitutes. MR &lt; P.</p><p>In both, one firm's revenue does not affect another's. In all other structures, firms' revenues are related.</p>`,
+tip:{en:"Many + free + identical = competition. One + blocked + no substitutes = monopoly.",es:"Muchos + libre + igual = competencia. Uno + bloqueado + sin sustitutos = monopolio."}},
+{id:"c10",t:"cost",q:"What is the profit-maximising rule?",es:"Regla de maximización del beneficio",
+a:`<p>Produce the output where <b>MR = MC</b>.</p><ul><li>MR &gt; MC → produce <b>more</b>, profit rises</li><li>MR &lt; MC → produce <b>less</b>, profit rises</li></ul><p>A monopoly also uses MR = MC, then reads its <b>price from the demand curve</b>.</p><p>In the short run a competitive firm cannot leave (some factor is fixed): it can make an economic profit, a normal profit or a loss.</p>`,
+tip:{en:"MR = MC. Always.",es:"MR = MC. Siempre."}},
+/* ---------- mercantilism & protectionism ---------- */
+{id:"t1",t:"trade",star:1,q:"What is mercantilism?",es:"¿Qué es el mercantilismo?",
+a:`<p>Economic theory and policy of the <b>16th to mid-18th century</b>, mainly in Great Britain, France, Spain, Portugal and the Benelux. Key idea: <b>profit comes from trade</b>.</p><ul><li><b>Wealth = precious metals</b>, mainly gold (and silver)</li><li>Wealth is created through <b>trade and commerce</b>; production only creates merchandise</li><li>A nation gets rich and powerful by <b>exporting more than it imports</b>; the difference is stored as gold and silver</li><li>So the government must <b>protect national production</b>: stimulate exports, restrict imports</li></ul>`,
+tip:{en:"Export a lot, import little, keep the gold.",es:"Exporta mucho, importa poco, guarda el oro."}},
+{id:"t2",t:"trade",star:1,q:"What is protectionism, and what are its tools?",es:"Proteccionismo y sus herramientas (formas)",
+a:`<p><b>Protectionism</b>: a government policy that protects national production and the home market from foreign competition.</p><p>Tools:</p><ul><li><b>Tariffs</b> = import taxes = customs duties</li><li><b>Quotas</b>: limits on the quantity imported</li><li><b>Administrative restrictions</b> on imports</li><li><b>Subsidies</b> for exports</li></ul>`,
+tip:{en:"TQAS: Tariffs, Quotas, Administrative restrictions, Subsidies.",es:"TQAS: Tariffs, Quotas, Administrative restrictions, Subsidies."}},
+{id:"t3",t:"trade",star:1,q:"How are mercantilism and protectionism related?",es:"Mercantilismo vs proteccionismo",
+a:`<p><b>Mercantilism</b> is the <b>idea</b>: wealth = gold, earned with a positive trade balance.</p><p><b>Protectionism</b> is the <b>set of tools</b> to get there: tariffs, quotas, administrative restrictions, export subsidies.</p><p>Mercantilism <b>leads to</b> protectionism. Protectionism also lived on later without the gold idea, e.g. <b>Friedrich List</b> protecting young German industries.</p>`,
+tip:{en:"Mercantilism = the IDEA. Protectionism = the TOOLS.",es:"Mercantilismo = la IDEA. Proteccionismo = las HERRAMIENTAS."}},
+{id:"p1",t:"trade",star:1,q:"How do governments regulate international business?",es:"Cómo regulan los gobiernos el comercio internacional",
+a:`<p>In two directions:</p><ol><li><b>Import restrictions</b>: tariffs, quotas, and government regulations as additional barriers</li><li><b>Increasing exports</b>: subsidies (tax facilitation, incentives or extra pay)</li></ol><p>The result is a <b>difference between external (world) prices and internal (domestic) prices</b>.</p>`,
+tip:{en:"Brake on imports, accelerator on exports.",es:"Freno a las importaciones, acelerador a las exportaciones."}},
+{id:"p2",t:"trade",star:1,q:"Tariffs vs quotas vs government regulations: what does each one do?",es:"Aranceles vs cuotas vs regulaciones",
+a:`<ul><li><b>Tariffs</b>: a tax on imported goods. Aim: <b>raise their price</b> and reduce competition with local products</li><li><b>Quotas</b>: a limit on the <b>quantity</b> imported. Aim: reduce competition by <b>lowering foreign firms' market share</b></li><li><b>Government regulations</b>: extra administrative <b>barriers</b> to imports</li></ul>`,
+tip:{en:"Tariff = hits the PRICE. Quota = hits the QUANTITY.",es:"Arancel = toca el PRECIO. Cuota = toca la CANTIDAD."}},
+{id:"p3",t:"trade",star:1,q:"What are export subsidies, and what do they achieve?",es:"Subvenciones a la exportación",
+a:`<p>Government support to <b>increase exports</b>:</p><ul><li><b>Tax facilitation</b> (tax breaks)</li><li><b>Incentives</b> or <b>extra pay</b> for exporting</li></ul><p>Effect: the exporter can sell at <b>lower prices abroad</b>, or keep a <b>higher profit share</b> in the price.</p>`,
+tip:{en:"Subsidy = cheaper abroad, or more profit for the firm.",es:"Subvención = más barato fuera o más beneficio para la empresa."}},
+{id:"t4",t:"trade",star:1,q:"How did Spain and Portugal practise mercantilism?",es:"Mercantilismo en España y Portugal",
+a:`<p><b>Monetary system</b>: they created wealth by <b>direct conquest</b>, bringing silver and gold from the New World (the Americas) and Africa.</p><p>The Benelux followed this partly.</p>`,
+tip:{en:"Spain and Portugal: gold is conquered, not traded.",es:"España y Portugal: el oro se conquista, no se comercia."}},
+{id:"t5",t:"trade",star:1,q:"How did England practise mercantilism?",es:"Mercantilismo en Inglaterra",
+a:`<p>Goal: an <b>active monetary balance</b>, a positive foreign-trade balance to gain more gold.</p><ul><li><b>William Stafford</b> (1554–1612): metallism</li><li><b>Thomas Mun</b> (1571–1641): developed mercantilism; book “England's Treasure by Foreign Trade”; goal: a positive trade balance</li><li><b>Queen Elizabeth I</b> (16th c.): restricted imports of unrefined metal, leather goods and crafts; extra taxes and tariffs on goods brought by foreign ships</li><li><b>Navigation Act</b> (1651 to mid-19th c.): imports only on English ships (a transport monopoly) and very high tariffs</li></ul>`,
+tip:{en:"Mun wrote the book, Elizabeth I set the tariffs, the Navigation Act closed the ships.",es:"Mun escribió el libro, Isabel I puso aranceles, la Navigation Act cerró los barcos."}},
+{id:"t6",t:"trade",star:1,q:"Who was Colbert, and what did he do?",es:"Colbert y el mercantilismo francés",
+a:`<p><b>Jean-Baptiste Colbert</b>, finance minister of <b>Louis XIV</b> (France).</p><ul><li>Extremely high tariffs on every imported product that was also made in France</li><li>Very effective, efficient support for the national <b>manufacturing industry</b></li><li>Also <b>agrarian protectionism</b> (protecting farming)</li></ul>`,
+tip:{en:"Colbert = France = sky-high tariffs to protect industry.",es:"Colbert = Francia = aranceles altísimos para proteger la industria."}},
+{id:"t7",t:"trade",star:1,q:"What did Friedrich List argue?",es:"Friedrich List (Alemania)",
+a:`<p><b>Friedrich List</b> (Germany, 19th c.) was <b>against the free market</b> and <b>for national protectionism</b>.</p><p>Protective customs duties should:</p><ol><li>protect <b>developing (infant) industries</b></li><li>help form a <b>united national</b> government and economy</li></ol>`,
+tip:{en:"List = protect the “baby” industry until it grows up.",es:"List = proteger a la industria “bebé” hasta que crezca."}},
+{id:"t12",t:"trade",q:"Mercantilism vs free trade: what are the key differences?",es:"Mercantilismo vs libre comercio",
+a:`<ul><li><b>Wealth</b>: gold and silver ↔ production and satisfied consumers</li><li><b>Trade</b>: one side wins, the other loses ↔ both sides gain</li><li><b>Aim</b>: export &gt; import ↔ specialisation (absolute or comparative advantage)</li><li><b>State</b>: strong intervention, tariffs ↔ few barriers (GATT, WTO)</li></ul>`,
+tip:{en:"Mercantilism: one side wins. Free trade: both sides win.",es:"Mercantilismo: gana uno. Libre comercio: ganan los dos."}},
+/* ---------- trade theories ---------- */
+{id:"th1",t:"theories",q:"What are the four groups of international economic theories, in order?",es:"Las cuatro etapas de las teorías económicas internacionales",
+a:`<ol><li><b>Mercantilism</b> (16th to mid-18th c.): wealth = gold; export more than you import</li><li><b>Classical theories</b>, free trade and advantages: Smith (absolute advantage), Ricardo (comparative advantage), J. S. Mill (terms of trade)</li><li><b>Neoclassical theories</b>, opportunity costs: Heckscher-Ohlin, Leontief paradox</li><li><b>Modern theories</b>: Keynes, Samuelson, Porter (competitive advantage)</li></ol>`,
+tip:{en:"Mercantilism, Classical, Neoclassical, Modern: gold → advantages → opportunity cost → competition.",es:"Mercantilismo, Clásicas, Neoclásicas, Modernas: oro → ventajas → coste de oportunidad → competencia."}},
+{id:"t8",t:"theories",q:"What is Adam Smith's theory of absolute advantage?",es:"Adam Smith y la ventaja absoluta",
+a:`<p><b>Adam Smith</b> (1723–1790), “<b>The Wealth of Nations</b>” (1776). The founder of <b>free trade</b>.</p><p><b>Absolute advantage</b>, mostly based on <b>land</b> resources (what you can grow on the land or mine from it):</p><ul><li>Specialise in and <b>export</b> the goods you produce <b>more efficiently than other countries</b></li><li><b>Import</b> only the goods where you have an <b>absolute disadvantage</b></li></ul><p>Result: international specialisation → growth of world production → growth of trade that satisfies <b>all</b> nations (unlike the inequality of mercantilism).</p>`,
+tip:{en:"Smith = Absolute, based on land.",es:"Smith = Absoluta, basada en la tierra."}},
+{id:"th3",t:"theories",q:"According to Smith, what is wealth? When does he accept protectionism?",es:"La riqueza según Smith y cuándo acepta el proteccionismo",
+a:`<p>Wealth does <b>not</b> lie in accumulated gold and silver. Through international specialisation and trade, <b>consumers' needs are satisfied at a higher level</b>.</p><p>This brings <b>economic growth</b>, a <b>higher standard of living</b> and a rationalisation of capital and labour.</p><p>Protectionism only in <b>two cases</b>: <b>defence</b>, and <b>highly taxed national industries</b>.</p>`,
+tip:{en:"Wealth = satisfied consumers, not gold. Two exceptions: defence and highly taxed industries.",es:"Riqueza = consumidores satisfechos, no oro. Dos excepciones: defensa e industrias con muchos impuestos."}},
+{id:"t9",t:"theories",q:"What is David Ricardo's theory of comparative advantage?",es:"Ricardo y la ventaja comparativa",
+a:`<p><b>David Ricardo</b> (1772–1823).</p><p><b>Comparative advantage</b>: compare countries by the <b>unit labour requirement</b> (labour needed per unit). A nation should export what it produces <b>relatively</b> more efficiently, using less labour (less time, fewer people), even if another country is better at everything.</p><p>For Ricardo, international business is a <b>growth</b> factor but <b>not a wealth-creation</b> factor.</p><p>Classic example: England (cloth) and Portugal (wine).</p>`,
+tip:{en:"Ricardo = Relative (comparative), based on labour.",es:"Ricardo = Relativa (comparativa), basada en el trabajo."}},
+{id:"th4",t:"theories",q:"What are the labour theory of value and the unit labour requirement?",es:"Teoría del valor-trabajo y requerimiento unitario de trabajo",
+a:`<p><b>Labour theory of value</b>: the value of a good depends on the <b>labour time</b> used to produce it.</p><p><b>Unit labour requirement</b>: the labour needed to make one unit. Differences in labour efficiency create <b>productivity differences between countries</b>, and these decide what each country exports.</p>`,
+tip:{en:"Value = hours of work. Fewer hours per unit = export it.",es:"Valor = horas de trabajo. Menos horas por unidad = expórtalo."}},
+{id:"t10",t:"theories",q:"What did John Stuart Mill add?",es:"John Stuart Mill",
+a:`<p>A Ricardian economist who added the <b>terms of trade</b>: the rate at which a country's exports exchange for its imports.</p><p>He included:</p><ul><li><b>demand</b>, not only supply (production)</li><li><b>international finance</b> (balance of payments)</li><li>the <b>structure of goods</b></li></ul>`,
+tip:{en:"Mill = Measures the terms of trade.",es:"Mill = Mide la relación de intercambio (terms of trade)."}},
+{id:"th5",t:"theories",q:"What do neoclassical trade theories focus on?",es:"Teorías neoclásicas",
+a:`<p><b>Opportunity costs.</b> They analyse production costs to determine value and trade:</p><ul><li><b>Minimum cost comparison</b>: how much it costs <b>not</b> to produce something</li><li>The effect of <b>demand and supply</b> on cost</li><li>The <b>structure of prices</b> and how prices relate</li></ul><p>Main model: <b>Heckscher-Ohlin</b>. Its critique: the <b>Leontief paradox</b>.</p>`,
+tip:{en:"Neoclassical = opportunity cost.",es:"Neoclásicas = coste de oportunidad."}},
+{id:"th6",t:"theories",q:"What are the assumptions of the Heckscher-Ohlin (H-O) model?",es:"Supuestos del modelo Heckscher-Ohlin",
+a:`<p>Also called the <b>factor-proportion theory</b>. It is a <b>two-factor</b> economy:</p><ul><li><b>Two countries</b>, each producing <b>two products</b>, each product using the same <b>two factors</b> of production</li><li>Differences in <b>needs and tastes</b></li><li>Relative <b>abundance</b> of production factors (resources)</li><li>Relative <b>intensity</b> of the factors used (technology)</li></ul><p>The ratio of the two factor prices decides whether a product is <b>labour-intensive</b> or <b>resource-intensive</b>.</p>`,
+tip:{en:"2 × 2 × 2: two countries, two products, two factors.",es:"2 × 2 × 2: dos países, dos productos, dos factores."}},
+{id:"th7",t:"theories",q:"What does the Heckscher-Ohlin model conclude?",es:"Conclusión del modelo H-O",
+a:`<p>Countries <b>export goods whose production is intensive in the factors they have in abundance</b>, and import the rest.</p><ul><li>Labour-abundant country → exports labour-intensive goods</li><li>Resource-abundant country → exports resource-intensive goods</li></ul><p>For H-O, international business is a <b>growth and wealth-creation</b> factor, and trade has a <b>direct effect on income distribution</b>.</p><p>Labour-intensive products are not very sensitive to changes in resource prices, and vice versa.</p>`,
+tip:{en:"Export what you have plenty of.",es:"Exporta lo que te sobra."}},
+{id:"th8",t:"theories",q:"What is the Leontief paradox?",es:"La paradoja de Leontief",
+a:`<p><b>Leontief</b> (1951) tested H-O on <b>US trade</b>, using two factors: <b>capital and labour</b>.</p><p>H-O predicts that the capital-rich USA should export capital-intensive goods. He found the <b>opposite</b>: the USA <b>exported labour-intensive</b> products and <b>imported capital-intensive</b> ones.</p><p>That is why it is a <b>paradox</b>, and a critique of H-O.</p>`,
+tip:{en:"Leontief = the USA did the opposite of what H-O predicts.",es:"Leontief = EE. UU. hacía lo contrario de lo que predice H-O."}},
+{id:"th9",t:"theories",q:"What are the modern international economic theories?",es:"Teorías modernas",
+a:`<ul><li><b>Keynes</b>: “The General Theory of Employment, Interest and Money” (1936); growth theories</li><li><b>Samuelson</b>: critic of the Leontief paradox; macroeconomic growth theories with mathematical proofs</li><li><b>Porter</b>: <b>competitive advantage</b>. “Competition is at the core of the success or failure of firms”: choosing the right competitive strategy and implementing it well</li></ul>`,
+tip:{en:"KSP: Keynes growth, Samuelson maths, Porter competition.",es:"KSP: Keynes crecimiento, Samuelson matemáticas, Porter competencia."}},
+{id:"th10",t:"theories",q:"What are Porter's three generic competitive strategies?",es:"Las tres estrategias genéricas de Porter",
+a:`<ol><li><b>Cost leadership</b>: broad target; aims at the <b>lowest cost</b>, keeping parity or proximity with rivals</li><li><b>Differentiation</b>: broad target, but aims at <b>uniqueness</b>: special attributes buyers value, so they pay a <b>premium price</b></li><li><b>Focus</b>: targets a <b>special segment</b> of the market, with a narrow scope of activities</li></ol>`,
+tip:{en:"Cheapest, different, or niche.",es:"El más barato, el diferente o el de nicho."}},
+{id:"th11",t:"theories",q:"Is international trade a source of wealth? What does each theory say?",es:"¿Crea riqueza el comercio? Qué dice cada teoría",
+a:`<ul><li><b>Mercantilism</b>: wealth = gold, gained through a trade surplus; one nation wins, the other loses</li><li><b>Smith</b>: wealth = satisfying consumers' needs at a higher level through specialisation and trade</li><li><b>Ricardo</b>: trade is a <b>growth</b> factor, but <b>not</b> a wealth-creation factor</li><li><b>Heckscher-Ohlin</b>: trade is a <b>growth and wealth-creation</b> factor</li></ul>`,
+tip:{en:"Ricardo: growth only. H-O: growth + wealth.",es:"Ricardo: solo crecimiento. H-O: crecimiento + riqueza."}},
+{id:"t11",t:"theories",q:"Which global organisations support free trade?",es:"Organizaciones del libre comercio",
+a:`<ul><li><b>GATT</b>, General Agreement on Tariffs and Trade (1947): cut tariffs step by step</li><li><b>WTO</b>, World Trade Organization (1995): replaced GATT; sets and enforces trade rules</li><li><b>IMF</b>, International Monetary Fund (1944): stability of international payments and exchange rates</li></ul>`,
+tip:{en:"GATT became the WTO. The IMF looks after payments and currencies.",es:"GATT se convirtió en la WTO. El IMF cuida los pagos y las monedas."}},
+/* ---------- comparative advantage ---------- */
+{id:"ca4",t:"compadv",q:"Absolute vs comparative advantage: what is the difference?",es:"Ventaja absoluta vs comparativa",
+a:`<p><b>Absolute advantage</b> (Smith): a country produces <b>more</b> of a good, or the same amount with fewer resources, than another country.</p><p><b>Comparative advantage</b> (Ricardo): a country produces a good at a <b>lower opportunity cost</b> than another country.</p><p>A country can have the absolute advantage in <b>both</b> goods (USA vs Brazil, Nigeria vs Niger) and trade still pays: each specialises in its comparative advantage.</p>`,
+tip:{en:"Absolute = who makes more. Comparative = who gives up less.",es:"Absoluta = quién produce más. Comparativa = quién renuncia a menos."}},
+{id:"ca1",t:"compadv",q:"How do you find comparative advantage from a production table?",es:"Cómo calcular la ventaja comparativa con una tabla",
+a:`<ol><li>For each country, calculate the <b>opportunity cost</b> of one unit of each good: <code>OC of A = output of B ÷ output of A</code></li><li>The country with the <b>lower opportunity cost</b> in a good has the <b>comparative advantage</b> in it, and should specialise in it and export it</li><li>The trade price must lie <b>between the two countries' opportunity costs</b></li></ol>`,
+tip:{en:"Lowest opportunity cost wins. The price sits in between.",es:"Gana el coste de oportunidad más bajo. El precio queda en medio."}},
+{id:"ca2",t:"compadv",q:"USA: 5,000 computers or 10,000 shoes. Brazil: 200 computers or 5,000 shoes. Who has the comparative advantage in what?",es:"Ejemplo: EE. UU. vs Brasil",
+a:`<p>Opportunity cost of <b>1 computer</b>:</p><ul><li>USA: 10,000 ÷ 5,000 = <b>2 shoes</b></li><li>Brazil: 5,000 ÷ 200 = <b>25 shoes</b></li></ul><p>Opportunity cost of <b>1 shoe</b>: USA 1/2 computer, Brazil 1/25 computer.</p><p><b>USA</b>: comparative advantage in <b>computers</b>. <b>Brazil</b>: comparative advantage in <b>shoes</b>.</p><p>Trade price: between <b>2 and 25 shoes per computer</b>. The USA has the absolute advantage in both goods, and trade still helps both.</p>`,
+tip:{en:"Divide the other good by this good. The smaller number has the advantage.",es:"Divide el otro bien entre este. El número más pequeño tiene la ventaja."}},
+{id:"ca3",t:"compadv",q:"Nigeria: 100 bales of textile or 500 bushels of sorghum. Niger: 50 bales or 400 bushels. Who has the comparative advantage in what?",es:"Ejemplo: Nigeria vs Níger",
+a:`<p>Opportunity cost of <b>1 bale of textile</b>:</p><ul><li>Nigeria: 500 ÷ 100 = <b>5 bushels</b> of sorghum</li><li>Niger: 400 ÷ 50 = <b>8 bushels</b> of sorghum</li></ul><p>Opportunity cost of <b>1 bushel of sorghum</b>: Nigeria 1/5 bale, Niger 1/8 bale.</p><p><b>Nigeria</b>: comparative advantage in <b>textile</b>. <b>Niger</b>: comparative advantage in <b>sorghum</b>.</p><p>Trade price: between <b>5 and 8 bushels of sorghum per bale</b> of textile.</p>`,
+tip:{en:"Nigeria is better at both (absolute), but textile costs it less (comparative).",es:"Nigeria es mejor en los dos (absoluta), pero el textil le cuesta menos (comparativa)."}},
+{id:"ca5",t:"compadv",q:"How does the production possibility curve show comparative advantage?",es:"La curva de posibilidades de producción",
+a:`<p>Draw each country's production possibility line, with Good 1 on the vertical axis and Good 2 on the horizontal axis.</p><ul><li>The <b>steeper</b> line has the comparative advantage in the good on the <b>vertical</b> axis (Brazil: shoes)</li><li>The <b>flatter</b> line has it in the good on the <b>horizontal</b> axis (USA: computers)</li></ul><p>The slope is the opportunity cost of the horizontal-axis good. The relative price lies between the two opportunity costs: Brazil 25 shoes per computer, USA 2 shoes per computer.</p>`,
+tip:{en:"Steep → the vertical good. Flat → the horizontal good.",es:"Empinada → el bien del eje vertical. Plana → el del eje horizontal."}},
+/* ---------- FOREX ---------- */
+{id:"f1",t:"forex",q:"What is the foreign exchange market (FOREX)?",es:"El mercado de divisas (FOREX)",
+a:`<p>A <b>global network</b> of banks, brokers and foreign exchange dealers connected by electronic communication systems. It is part of the <b>financial markets</b>.</p><p>Two functions:</p><ol><li><b>Converts</b> the currency of one country into another</li><li>Provides some <b>insurance against foreign exchange risk</b></li></ol><p>The market is <b>always open</b> somewhere in the world.</p>`,
+tip:{en:"FOREX = convert + insure. It never sleeps.",es:"FOREX = cambiar + asegurar. Nunca cierra."}},
+{id:"f2",t:"forex",q:"Why do international firms use foreign exchange markets?",es:"Para qué usan las empresas el mercado de divisas",
+a:`<ul><li>To <b>convert</b> export receipts, income from foreign investments and income from licensing agreements</li><li>To <b>pay</b> a foreign company for products or services</li><li>To <b>invest spare cash</b> for short terms in money markets</li><li>For <b>currency speculation</b>: the short-term movement of funds from one currency to another</li></ul>`,
+tip:{en:"Convert, pay, invest, speculate.",es:"Convertir, pagar, invertir, especular."}},
+{id:"f3",t:"forex",q:"What is an exchange rate? What are spot rates, forward rates and swaps?",es:"Tipo de cambio: spot, forward y swap",
+a:`<p><b>Exchange rate</b>: the rate at which one currency is converted into another.</p><ul><li><b>Spot rate</b>: the conversion rate on a particular day, set by supply and demand</li><li><b>Forward rate</b>: for a future transaction in <b>30, 90 or 180 days</b></li><li><b>Currency swap</b>: simultaneous purchase and sale of an amount of currency for two different value dates; you move into another currency for a limited time <b>without exchange-rate risk</b></li></ul>`,
+tip:{en:"Spot = today. Forward = later. Swap = there and back.",es:"Spot = hoy. Forward = más adelante. Swap = ida y vuelta."}},
+/* ---------- emerging & mature markets ---------- */
+{id:"mk1",t:"markets",q:"What are the two ways of classifying markets?",es:"Dos formas de clasificar los mercados",
+a:`<ol><li>By <b>product cycle</b>: (1) emerging, in the growth phase; (2) mature, at the top of the curve</li><li>By <b>economic development</b>: emerging markets vs mature markets</li></ol>`,
+tip:{en:"Young market = emerging. Grown-up market = mature.",es:"Mercado joven = emergente. Mercado adulto = maduro."}},
+{id:"mk2",t:"markets",q:"What are the characteristics of emerging markets?",es:"Características de los mercados emergentes",
+a:`<ul><li><b>Rapid economic growth</b></li><li>Government policies for <b>economic liberalisation</b>, towards a <b>free market</b></li><li><b>Low</b> level of product penetration</li><li><b>Weak</b> domestic competition</li><li><b>High</b> market growth</li></ul>`,
+tip:{en:"Emerging = fast growth, few products, little competition.",es:"Emergente = crece rápido, pocos productos, poca competencia."}},
+{id:"mk3",t:"markets",q:"What problems do emerging markets have with product, capital and labour?",es:"Problemas de los mercados emergentes: producto, capital y trabajo",
+a:`<ul><li><b>Product</b>: underdeveloped communication system, flaws in the legal system (e.g. no mechanism for claims), insufficient consumer protection</li><li><b>Capital</b>: little information about the market and its players; firms must rely on local groups (conglomerates)</li><li><b>Labour</b>: not enough trained workers. Solution: internal management training, investing in courses, relying on large conglomerates and specialised labour markets</li></ul>`,
+tip:{en:"P-C-L: Product, Capital, Labour.",es:"P-C-L: Producto, Capital, Trabajo (Labour)."}},
+{id:"mk4",t:"markets",q:"What government and legal problems do emerging markets have?",es:"Problemas de regulación y de contratos",
+a:`<ul><li><b>Government regulations</b>: export subsidies, import quotas and tariffs, bureaucracy and corruption</li><li><b>Contract enforcement</b>: problems with the judicial system</li></ul>`,
+tip:{en:"Protectionism + bureaucracy + weak courts.",es:"Proteccionismo + burocracia + justicia débil."}},
+{id:"mk5",t:"markets",q:"What must a firm invest in to enter an emerging market?",es:"Necesidades de inversión en mercados emergentes",
+a:`<ul><li><b>Customer education</b></li><li><b>Marketing infrastructure</b> and distribution channels</li><li><b>Brand</b> establishment</li><li><b>Market-specific knowledge</b></li><li>Special costs caused by <b>distance</b></li></ul>`,
+tip:{en:"Teach the customer, build the channels, create the brand, learn the market, pay for distance.",es:"Educar al cliente, crear canales, crear marca, conocer el mercado, pagar la distancia."}},
+{id:"mk6",t:"markets",q:"What are the characteristics of mature markets?",es:"Características de los mercados maduros",
+a:`<ul><li><b>High</b> level of economic development</li><li><b>Well-established</b> market mechanism</li><li><b>High</b> market saturation</li><li><b>Strong</b> local and global competition</li><li><b>Slow</b> market growth</li></ul>`,
+tip:{en:"Mature = rich, full, crowded, slow.",es:"Maduro = rico, saturado, mucha competencia, lento."}},
+{id:"mk7",t:"markets",q:"Which difficulties and risks does the course list when choosing a market?",es:"Dificultades y riesgos al elegir mercado",
+a:`<p>The slide “Difficulties on mature markets” lists:</p><ul><li><b>Macroeconomic stability</b></li><li><b>Legal infrastructure</b></li><li><b>Political risk</b></li></ul><p>Warning: an emerging market can <b>look more attractive than it really is</b>, because of the higher cost and risk involved.</p><p>Task: <b>gain experience and knowledge</b> first.</p>`,
+tip:{en:"Check the economy, the law and the politics before you go.",es:"Revisa economía, leyes y política antes de entrar."}},
+{id:"mk8",t:"markets",q:"Emerging vs mature markets: what are the key differences?",es:"Emergentes vs maduros",
+a:`<ul><li><b>Growth</b>: rapid ↔ slow</li><li><b>Products</b>: low penetration ↔ high saturation</li><li><b>Competition</b>: weak domestic ↔ strong local and global</li><li><b>Development</b>: liberalising towards a free market ↔ high development, well-established market mechanism</li></ul>`,
+tip:{en:"Emerging = opportunity with risk. Mature = safety with crowding.",es:"Emergente = oportunidad con riesgo. Maduro = seguridad con mucha competencia."}},
+/* ---------- EU ---------- */
+{id:"u1",t:"eu",q:"How did European integration start?",es:"El inicio de la integración europea",
+a:`<p><b>1951</b>: six countries create the <b>European Coal and Steel Community (ECSC)</b>, the first step of European integration, based on economic cooperation.</p><p>The six: <b>Belgium, France, Germany, Italy, Luxembourg, the Netherlands</b>.</p>`,
+tip:{en:"The six = Benelux (3) + France, Germany, Italy.",es:"Los 6 = Benelux (3) + Francia, Alemania, Italia."}},
+{id:"u2",t:"eu",q:"What did the Treaty of Rome (1957) create?",es:"El Tratado de Roma",
+a:`<p>Signed in <b>1957</b> by the six founding states. It created:</p><ul><li>the <b>European Economic Community (EEC)</b></li><li>the <b>European Atomic Energy Community (Euratom)</b></li></ul><p>Later treaties adapted the Treaty of Rome as cooperation grew.</p>`,
+tip:{en:"’51 coal and steel; ’57 Rome.",es:"51 carbón y acero; 57 Roma."}},
+{id:"u3",t:"eu",q:"How has the EU grown, and what is the Lisbon Treaty?",es:"Ampliación y Tratado de Lisboa",
+a:`<p>It grew in phases from <b>6 to 28</b> members (class notes; <b>27</b> since Brexit in 2020).</p><p>Candidates in the class notes: North Macedonia (FYROM), Iceland, Turkey, Montenegro, Serbia. Potential candidates: Albania, Bosnia-Herzegovina, Kosovo.</p><p><b>Lisbon Treaty</b> (signed 2007): sets the course for EU integration in the 21st century and makes the EU's workings simpler and clearer.</p>`,
+tip:{en:"From 6 to 28. Lisbon = the EU for the 21st century.",es:"De 6 a 28. Lisboa = la UE del siglo XXI."}},
+{id:"u4",t:"eu",q:"Why did the EU win the Nobel Peace Prize in 2012?",es:"El Nobel de la Paz de 2012",
+a:`<p>For advancing <b>peace, reconciliation, democracy and human rights</b> in Europe.</p>`,
+tip:{en:"Peace, reconciliation, democracy, human rights.",es:"Paz, reconciliación, democracia, derechos humanos."}}
+];
+
+const STAR_N=CARDS.filter(c=>c.star).length;
+const UI={
+en:{
+  eyebrow:"International Economics · exam review",
+  lede:`${CARDS.length} flashcards built from the class notes: economics basics, demand and supply, elasticity, costs and profit, international business, mercantilism and protectionism, trade theories, comparative advantage, FOREX, emerging markets and the EU. The ${STAR_N} cards marked ‼️ are the priority topics, so start with those. Your progress is saved in your own browser only.`,
+  tabStudy:"Study",tabMethod:"Method",tabCheat:"Cheat sheet",
+  how1:"Read the question",how2:"Answer it out loud, without looking",how3:"Flip it and mark it honestly",
+  fStar:"‼️ Priority",fAll:"All",fAgain:"✗ Missed",
+  known:"known",toReview:"to review",notSeen:"not seen",
+  again:"✗ Again",know:"✓ I know it",shuffle:"Shuffle",reset:"Clear my progress",resetSure:"Click again to clear everything",
+  hint:`Keys: <span class="kbd">Space</span> show answer · <span class="kbd">←</span> again · <span class="kbd">→</span> I know it`,
+  reveal:"Show answer",star:"‼️ Priority",missed:"✗ missed before",left:n=>`${n} left`,trick:"Memory trick",
+  emptyH:"No missed cards",emptyP:"Cards you mark ✗ show up here, so you can review them before bed and again before the exam.",goStar:"Go to ‼️ Priority",goAll:"See all cards",
+  doneH:"Round complete",doneP:(n,l)=>`You know all ${n} cards in “${l}”. To lock them in, do another round later or move on to another group.`,newRound:"New round for this group",
+  cheatOnly:"Only ‼️ priority",cheatTrick:"Trick:"
+},
+es:{
+  eyebrow:"International Economics · repaso para el examen",
+  lede:`${CARDS.length} tarjetas sacadas de los apuntes de clase: fundamentos, oferta y demanda, elasticidad, costes y beneficio, negocio internacional, mercantilismo y proteccionismo, teorías del comercio, ventaja comparativa, divisas, mercados emergentes y la UE. Las ${STAR_N} marcadas ‼️ son los temas prioritarios: empieza por ellas. Preguntas y respuestas en inglés, como en el examen. Tu progreso solo se guarda en tu navegador.`,
+  tabStudy:"Estudiar",tabMethod:"Método",tabCheat:"Chuleta",
+  how1:"Lee la pregunta",how2:"Respóndela en voz alta, sin mirar",how3:"Gira y márcala sin trampas",
+  fStar:"‼️ Prioridad",fAll:"Todas",fAgain:"✗ Falladas",
+  known:"me las sé",toReview:"por repasar",notSeen:"sin ver",
+  again:"✗ Otra vez",know:"✓ Me la sé",shuffle:"Barajar",reset:"Borrar mi progreso",resetSure:"Pulsa otra vez para borrarlo todo",
+  hint:`Teclado: <span class="kbd">Espacio</span> ver respuesta · <span class="kbd">←</span> otra vez · <span class="kbd">→</span> me la sé`,
+  reveal:"Mostrar respuesta",star:"‼️ Prioridad",missed:"✗ fallada antes",left:n=>`Quedan ${n}`,trick:"Truco",
+  emptyH:"No tienes tarjetas falladas",emptyP:"Las tarjetas que marques con ✗ aparecerán aquí, para repasarlas antes de dormir y otra vez antes del examen.",goStar:"Ir a ‼️ Prioridad",goAll:"Ver todas",
+  doneH:"Ronda terminada",doneP:(n,l)=>`Te sabes las ${n} tarjetas de «${l}». Para fijarlas, haz otra ronda más tarde o pasa a otro grupo.`,newRound:"Nueva ronda de este grupo",
+  cheatOnly:"Solo ‼️ prioridad",cheatTrick:"Truco:"
+}};
+
+const METHOD={
+en:{
+  introH:"The 3R method: Read, Recall, Repeat",
+  introP:"Re-reading and highlighting feel productive, but they fade fast. What makes things stick is <b>pulling the answer out of your own head</b> (active recall) and <b>repeating exactly what you miss</b> (spaced repetition). These cards do both: anything you mark ✗ comes back a few cards later until you know it.",
+  planH:"Plan for the evening before the exam (about 2 h 45)",
+  plan:[
+    ["20 min","Read the cheat sheet once","Open <b>Cheat sheet</b> with “Only ‼️ priority”. Read to understand, not to memorise."],
+    ["25 min","Flashcards: ‼️ Priority","Before you flip, say the answer out loud or write it in one line. If you hesitated, it's ✗."],
+    ["5 min","Break","Stand up, drink some water, no phone.",1],
+    ["25 min","Flashcards: All","Now the other topics. Cards you mark ✗ come back on their own."],
+    ["10 min","Break","Take a short walk.",1],
+    ["15 min","Comparative advantage on paper","Redo the USA/Brazil and Nigeria/Niger examples without looking. Then invent one of your own and solve it."],
+    ["15 min","Blank page","Without looking, write everything you remember about <b>mercantilism</b>, <b>protectionism</b>, <b>trade theories</b> and <b>costs &amp; profit</b>: names, dates, formulas. Compare with the cheat sheet and mark what you missed in red."],
+    ["15 min","Explain it to a friend","Out loud, in 2 minutes each: mercantilism vs protectionism vs free trade, and Smith vs Ricardo vs Heckscher-Ohlin. Where you get stuck is the card to review."],
+    ["10 min","Filter: ✗ Missed","Repeat until the filter is empty."],
+    ["Night","10 min before bed","One quick round of ‼️. Then sleep 7–8 hours: sleep is when memory consolidates. Staying up late costs more than it gives."],
+    ["Morning","15 min before the exam","Filter ✗ Missed, plus the formulas: elasticity, costs, profit, opportunity cost."]
+  ],
+  rulesH:"Golden rules",
+  rules:["Phone in another room during every 25-minute block.","Answer <b>before</b> you look. Looking straight away is re-reading, not recalling.","“Sort of” counts as ✗.","‼️ cards first, always.","Practise your answers in English, the way you'll write them in the exam."],
+  tricksH:"Memory tricks"
+},
+es:{
+  introH:"Método 3R: Lee, Recuerda, Repite",
+  introP:"Releer y subrayar da sensación de saber, pero se olvida rápido. Lo que fija la memoria es <b>sacar la respuesta de tu cabeza</b> (recuerdo activo) y <b>repetir justo lo que fallas</b> (repetición espaciada). Estas tarjetas hacen las dos cosas: las que marcas ✗ vuelven a salir a los pocos turnos hasta que te las sabes.",
+  planH:"Plan para la tarde antes del examen (unas 2 h 45)",
+  plan:[
+    ["20 min","Lee la Chuleta una vez","Pestaña <b>Chuleta</b> con “Solo ‼️ prioridad”. Lee para entender, sin intentar memorizar."],
+    ["25 min","Flashcards: ‼️ Prioridad","Antes de girar, di la respuesta en voz alta o escríbela en una línea. Si dudaste, es ✗."],
+    ["5 min","Pausa","Levántate, bebe agua, nada de móvil.",1],
+    ["25 min","Flashcards: Todas","Ahora el resto de temas. Las ✗ te vuelven a salir solas."],
+    ["10 min","Pausa","Camina un poco.",1],
+    ["15 min","Ventaja comparativa en papel","Rehaz los ejemplos de EE. UU./Brasil y Nigeria/Níger sin mirar. Luego inventa uno tuyo y resuélvelo."],
+    ["15 min","Folio en blanco","Sin mirar, escribe todo lo que recuerdes de <b>mercantilism</b>, <b>protectionism</b>, <b>trade theories</b> y <b>costs &amp; profit</b>: nombres, fechas, fórmulas. Luego compara con la Chuleta y apunta en rojo lo que faltó."],
+    ["15 min","Explícalo como a un amigo","En voz alta, 2 minutos cada uno: mercantilism vs protectionism vs free trade, y Smith vs Ricardo vs Heckscher-Ohlin. Donde te atasques, esa es la tarjeta que tienes que repasar."],
+    ["10 min","Filtro ✗ Falladas","Repítelas hasta que el filtro quede vacío."],
+    ["Noche","10 min antes de dormir","Una ronda rápida de ‼️. Luego duerme 7–8 h: mientras duermes se consolida lo estudiado. Trasnochar te quita más de lo que te da."],
+    ["Mañana","15 min antes del examen","Filtro ✗ Falladas y repasa las fórmulas: elasticidad, costes, beneficio, coste de oportunidad."]
+  ],
+  rulesH:"Reglas de oro",
+  rules:["Móvil en otra habitación durante cada bloque de 25 min.","Responde <b>antes</b> de mirar. Mirar enseguida es releer, no recordar.","“Más o menos” cuenta como ✗.","Las ‼️ primero, siempre.","Practica las respuestas en inglés, que es como las vas a escribir."],
+  tricksH:"Trucos para memorizar"
+}};
+const TRICKS=[
+  {k:{en:"Factors of production",es:"Factores de producción"},v:{en:"LLCE: Land, Labour, Capital, Entrepreneurship",es:"LLCE: Land, Labour, Capital, Entrepreneurship"}},
+  {k:{en:"What shifts demand",es:"Qué desplaza la demanda"},v:{en:"TIPEN: Tastes, Income, Price of related goods, Expectations, Number of buyers",es:"TIPEN: Tastes, Income, Price of related goods, Expectations, Number of buyers"}},
+  {k:{en:"Equilibrium",es:"Equilibrio"},v:{en:"Demand shifts: P and Q follow it. Supply shifts: Q follows it, P goes the other way.",es:"Demanda: P y Q van con ella. Oferta: Q va con ella, P al revés."}},
+  {k:{en:"Elasticity",es:"Elasticidad"},v:{en:"Q on top, P below. Above 1 = elastic. The I in Inelastic is vertical.",es:"Q arriba, P abajo. Más de 1 = elástica. La I de Inelástico es vertical."}},
+  {k:{en:"Fixed cost",es:"Coste fijo"},v:{en:"If you produce 0 and still pay it, it's fixed.",es:"Si produces 0 y aún lo pagas, es fijo."}},
+  {k:{en:"Profit",es:"Beneficio"},v:{en:"TR > TC economic · TR = TC normal · TR < TC loss",es:"TR > TC económico · TR = TC normal · TR < TC pérdida"}},
+  {k:{en:"Internationalization",es:"Internacionalización"},v:{en:"ELFF: Export, Licensing, Franchising, FDI",es:"ELFF: Export, Licensing, Franchising, FDI"}},
+  {k:{en:"Market structure",es:"Estructura de mercado"},v:{en:"NEP: Number of firms, Entry, Product standardisation",es:"NEP: Número de empresas, Entrada, Producto estandarizado"}},
+  {k:{en:"Protectionism tools",es:"Herramientas proteccionistas"},v:{en:"TQAS: Tariffs (price), Quotas (quantity), Administrative restrictions, Subsidies",es:"TQAS: Tariffs (precio), Quotas (cantidad), Administrative restrictions, Subsidies"}},
+  {k:{en:"Mercantilism by country",es:"Mercantilismo por país"},v:{en:"Spain/Portugal conquest · England trade balance (Mun, Elizabeth I, Navigation Act) · France Colbert · Germany List",es:"España/Portugal conquista · Inglaterra balanza (Mun, Isabel I, Navigation Act) · Francia Colbert · Alemania List"}},
+  {k:{en:"Theories in order",es:"Teorías en orden"},v:{en:"Mercantilism → Classical → Neoclassical → Modern: gold → advantages → opportunity cost → competition",es:"Mercantilismo → Clásicas → Neoclásicas → Modernas: oro → ventajas → coste de oportunidad → competencia"}},
+  {k:{en:"Who said what",es:"Quién dijo qué"},v:{en:"Smith Absolute (land) · Ricardo Relative (labour) · H-O Abundant factors · Leontief the paradox · Porter competition",es:"Smith Absoluta (tierra) · Ricardo Relativa (trabajo) · H-O factores Abundantes · Leontief la paradoja · Porter competencia"}},
+  {k:{en:"Comparative advantage",es:"Ventaja comparativa"},v:{en:"Other good ÷ this good. Lowest opportunity cost wins; the trade price sits in between.",es:"Otro bien ÷ este bien. Gana el coste de oportunidad más bajo; el precio queda en medio."}},
+  {k:{en:"Exchange rates",es:"Tipos de cambio"},v:{en:"Spot = today · Forward = 30/90/180 days · Swap = there and back, no FX risk",es:"Spot = hoy · Forward = 30/90/180 días · Swap = ida y vuelta, sin riesgo de cambio"}},
+  {k:{en:"Emerging vs mature",es:"Emergente vs maduro"},v:{en:"Emerging: fast, empty, weak rivals. Mature: slow, saturated, strong rivals.",es:"Emergente: rápido, vacío, poca competencia. Maduro: lento, saturado, mucha competencia."}},
+  {k:{en:"EU history",es:"Historia UE"},v:{en:"1951 ECSC (6 countries) · 1957 Rome (EEC + Euratom) · Lisbon 2007 · Nobel 2012",es:"1951 CECA (6 países) · 1957 Roma (EEC + Euratom) · Lisboa 2007 · Nobel 2012"}}
+];
+
+const FILTERS=["star","all","again"].concat(TOPICS.map(t=>t.key));
+const KEY="econ-deck-v1";
+let navLang="en";try{navLang=(navigator.language||"en").toLowerCase().startsWith("es")?"es":"en"}catch(e){}
+const state={tab:"study",filter:"star",progress:{},shuffle:false,cheatStar:false,lang:navLang};
+try{
+  const s=JSON.parse(localStorage.getItem(KEY)||"null");
+  if(s&&typeof s==="object"){
+    if(["study","method","cheat"].includes(s.tab))state.tab=s.tab;
+    if(FILTERS.includes(s.filter))state.filter=s.filter;
+    if(s.progress&&typeof s.progress==="object")state.progress=s.progress;
+    if(s.lang==="en"||s.lang==="es")state.lang=s.lang;
+    state.shuffle=!!s.shuffle;state.cheatStar=!!s.cheatStar;
+  }
+}catch(e){}
+const hash=(location.hash||"").slice(1);
+if(hash==="method"||hash==="metodo")state.tab="method";else if(hash==="cheat"||hash==="chuleta")state.tab="cheat";
+else if(hash==="en"||hash==="es")state.lang=hash;
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}}
+
+const $=id=>document.getElementById(id);
+const L=()=>UI[state.lang];
+const topicName=k=>{const t=TOPICS.find(x=>x.key===k);return t?t[state.lang]:k};
+function filterLabel(f){if(f==="star")return L().fStar;if(f==="all")return L().fAll;if(f==="again")return L().fAgain;return topicName(f)}
+let queue=[],revealed=false,resetArmed=null;
+
+function matches(c,f){
+  if(f==="all")return true;
+  if(f==="star")return !!c.star;
+  if(f==="again")return state.progress[c.id]==="a";
+  return c.t===f;
+}
+function pool(){return CARDS.filter(c=>matches(c,state.filter))}
+function shuffleArr(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function buildQueue(){
+  const list=pool().filter(c=>state.progress[c.id]!=="k");
+  if(state.shuffle)shuffleArr(list);
+  queue=list.map(c=>c.id);revealed=false;
+}
+function stats(){
+  const p=pool();let k=0,a=0;
+  p.forEach(c=>{const s=state.progress[c.id];if(s==="k")k++;else if(s==="a")a++;});
+  return {total:p.length,k:k,a:a,n:p.length-k-a};
+}
+function byId(id){return CARDS.find(c=>c.id===id)}
+
+function applyLang(){
+  document.documentElement.lang=state.lang;
+  document.querySelectorAll("[data-i]").forEach(el=>{const v=L()[el.dataset.i];if(typeof v==="string")el.textContent=v});
+  $("lede").textContent=L().lede;
+  $("hint").innerHTML=L().hint;
+  document.querySelectorAll("[data-lang]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.lang===state.lang)));
+}
+function renderTabs(){
+  document.querySelectorAll(".tab").forEach(b=>b.setAttribute("aria-selected",String(b.dataset.tab===state.tab)));
+  $("p-study").hidden=state.tab!=="study";
+  $("p-method").hidden=state.tab!=="method";
+  $("p-cheat").hidden=state.tab!=="cheat";
+}
+function countFor(f){return CARDS.filter(c=>matches(c,f)).length}
+function renderChips(){
+  $("chips").innerHTML=FILTERS.map(f=>`<button class="chip" type="button" data-f="${f}" aria-pressed="${f===state.filter}">${filterLabel(f)} <span class="n">${countFor(f)}</span></button>`).join("");
+}
+function renderStudy(){
+  const st=stats(),u=L();
+  const pk=st.total?st.k/st.total*100:0,pa=st.total?st.a/st.total*100:0;
+  $("progress").innerHTML=`<div class="bar" role="img" aria-label="${st.k} ${u.known}, ${st.a} ${u.toReview}, ${st.n} ${u.notSeen}"><span class="k" style="width:${pk}%"></span><span class="a" style="width:${pa}%"></span></div>
+  <div class="stats"><span><span class="k">✓ ${st.k}</span> ${u.known}</span><span><span class="a">✗ ${st.a}</span> ${u.toReview}</span><span>${st.n} ${u.notSeen}</span></div>`;
+  const stage=$("stage");
+  $("grade").hidden=!queue.length;
+  if(!queue.length){
+    if(st.total===0){
+      stage.innerHTML=`<div class="done"><h2>${u.emptyH}</h2><p>${u.emptyP}</p><div class="row"><button class="btn main" type="button" data-go="star">${u.goStar}</button><button class="btn plain" type="button" data-go="all">${u.goAll}</button></div></div>`;
+    }else{
+      stage.innerHTML=`<div class="done"><h2>${u.doneH}</h2><p>${u.doneP(st.total,filterLabel(state.filter))}</p><div class="row"><button class="btn main" type="button" data-again-round="1">${u.newRound}</button>${state.filter!=="all"?`<button class="btn plain" type="button" data-go="all">${u.goAll}</button>`:""}</div></div>`;
+    }
+    return;
+  }
+  const c=byId(queue[0]);
+  const tip=c.tip?c.tip[state.lang]:"";
+  stage.innerHTML=`<article class="card" id="card" tabindex="-1" aria-live="polite">
+    <header class="card-head">
+      <div class="meta"><span class="topic">${topicName(c.t)}</span>${c.star?`<span class="star">${u.star}</span>`:""}${state.progress[c.id]==="a"?`<span class="miss">${u.missed}</span>`:""}<span class="left">${u.left(queue.length)}</span></div>
+      <h2 class="q">${c.q}</h2>
+      ${state.lang==="es"?`<p class="q-es">${c.es}</p>`:""}
+    </header>
+    <div class="ruled">${revealed?`<div class="ans">${c.a}</div>`:`<button class="reveal" id="reveal" type="button">${u.reveal} <span class="kbd">${state.lang==="es"?"Espacio":"Space"}</span></button>`}</div>
+    ${revealed&&tip?`<footer class="tip"><b>${u.trick}</b><span>${tip}</span></footer>`:""}
+  </article>`;
+  $("btn-again").disabled=!revealed;
+  $("btn-know").disabled=!revealed;
+}
+function renderMethod(){
+  const m=METHOD[state.lang],lg=state.lang;
+  $("p-method").innerHTML=`
+  <div class="sheet"><h2>${m.introH}</h2><p>${m.introP}</p></div>
+  <div class="sheet"><h2>${m.planH}</h2><ol class="plan">${m.plan.map(s=>`<li${s[3]?' class="break"':""}><span class="time">${s[0]}</span><div><h3>${s[1]}</h3><p>${s[2]}</p></div></li>`).join("")}</ol></div>
+  <div class="sheet"><h2>${m.rulesH}</h2><ul class="rules">${m.rules.map(r=>`<li>${r}</li>`).join("")}</ul></div>
+  <div class="sheet"><h2>${m.tricksH}</h2><div class="tricks">${TRICKS.map(t=>`<div class="trick"><b>${t.k[lg]}</b><span>${t.v[lg]}</span></div>`).join("")}</div></div>`;
+}
+function renderCheat(){
+  const list=state.cheatStar?CARDS.filter(c=>c.star):CARDS;
+  $("cheat-star").setAttribute("aria-pressed",String(state.cheatStar));
+  $("cheat").innerHTML=TOPICS.map(t=>{
+    const items=list.filter(c=>c.t===t.key);
+    if(!items.length)return "";
+    return `<div class="sheet cheat-topic"><h2>${t[state.lang]} <span class="n">${items.length}</span></h2>${items.map(c=>`<div class="ci"><p class="ci-q">${c.q}${c.star?`<span class="star">‼️</span>`:""}</p><div class="ci-a">${c.a}</div>${c.tip?`<p class="ci-tip">${L().cheatTrick} ${c.tip[state.lang]}</p>`:""}</div>`).join("")}</div>`;
+  }).join("");
+}
+function focusCard(){const el=$("card");if(el)el.focus({preventScroll:true})}
+function reveal(){if(!queue.length||revealed)return;revealed=true;renderStudy();focusCard()}
+function mark(r){
+  if(!queue.length||!revealed)return;
+  const id=queue.shift();
+  state.progress[id]=r;
+  if(r==="a"){queue.splice(Math.min(3,queue.length),0,id)}
+  revealed=false;save();renderChips();renderStudy();focusCard();
+}
+function setFilter(f){state.filter=f;buildQueue();save();renderChips();renderStudy()}
+function renderAll(){applyLang();renderTabs();renderChips();renderStudy();renderMethod();renderCheat()}
+
+document.addEventListener("click",e=>{
+  const tab=e.target.closest(".tab");
+  if(tab){state.tab=tab.dataset.tab;save();renderTabs();return}
+  const lang=e.target.closest("[data-lang]");
+  if(lang){state.lang=lang.dataset.lang;save();renderAll();return}
+  const chip=e.target.closest("[data-f]");
+  if(chip){setFilter(chip.dataset.f);return}
+  const go=e.target.closest("[data-go]");
+  if(go){setFilter(go.dataset.go);return}
+  if(e.target.closest("[data-again-round]")){
+    pool().forEach(c=>{delete state.progress[c.id]});
+    buildQueue();save();renderChips();renderStudy();return;
+  }
+  if(e.target.closest("#reveal")){reveal();return}
+  if(e.target.closest("#btn-again")){mark("a");return}
+  if(e.target.closest("#btn-know")){mark("k");return}
+  if(e.target.closest("#btn-shuffle")){
+    state.shuffle=!state.shuffle;$("btn-shuffle").setAttribute("aria-pressed",String(state.shuffle));
+    buildQueue();save();renderStudy();return;
+  }
+  if(e.target.closest("#btn-reset")){
+    const b=$("btn-reset");
+    if(resetArmed){
+      clearTimeout(resetArmed);resetArmed=null;b.textContent=L().reset;
+      state.progress={};buildQueue();save();renderChips();renderStudy();
+    }else{
+      b.textContent=L().resetSure;
+      resetArmed=setTimeout(()=>{resetArmed=null;b.textContent=L().reset},4000);
+    }
+    return;
+  }
+  if(e.target.closest("#cheat-star")){state.cheatStar=!state.cheatStar;save();renderCheat();return}
+  if(e.target.closest("#card")&&!revealed){reveal()}
+});
+document.addEventListener("keydown",e=>{
+  if(state.tab!=="study"||e.metaKey||e.ctrlKey||e.altKey)return;
+  if(e.key===" "||e.code==="Space"){e.preventDefault();reveal();return}
+  if(e.key==="ArrowLeft"||e.key==="1"){e.preventDefault();mark("a");return}
+  if(e.key==="ArrowRight"||e.key==="2"){e.preventDefault();mark("k");return}
+});
+
+$("btn-shuffle").setAttribute("aria-pressed",String(state.shuffle));
+buildQueue();renderAll();
+})();
+</script>
+
+</body>
+</html>
